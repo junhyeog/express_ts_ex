@@ -1,9 +1,9 @@
 import express from 'express';
 var router = express.Router();
-import sum from '../controller/number';
+import eat from '../controller/eat';
 
-router.get('/to', function(req, res, next) {
-  res.send({"to":sum(req.query.num)});
+router.get('/', function(req, res, next) {
+  res.send({"to":eat(req.query.date, req.query.time)});
 });
 
 export default router;
