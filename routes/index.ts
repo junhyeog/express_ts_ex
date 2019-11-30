@@ -1,21 +1,49 @@
 import express from "express"
 var router = express.Router()
-import eat from "../controller/eat"
+import { getDiet } from "../controller/diet"
+import DietModel, { Daytime } from "../model/diet"
 
-router.get("/", function(req, res, next) {
-	const dateList = { mon: 0, tue: 0, wen: 0, thu: 0, fri: 0 }
-	const timeList = { morning: 0, lunch: 0, dinner: 0 }
-	const date = req.query.date
-	const time = req.query.time
-	if (!(date in dateList) || !(time in timeList)) res.send("Bad Request!")
-	else res.render("index", eat(date, time))
+router.get("/", async function(
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	const testdatas = await DietModel.find()
+	if (!testdatas) console.log("none!!")
+	else console.log(testdatas.length)
+	// testdatas.map((testdata, idx) => {
+	// 	console.log(
+	// 		testdata.month,
+	// 		testdata.date,
+	// 		testdata.daytime,
+	// 		testdata.menus,
+	// 		idx
+	// 	)
+	// })
+	return res.send("check server console!")
 })
-router.get("/semantic/:date/:time", function(req, res, next) {
-	const dateList = { mon: 0, tue: 0, wen: 0, thu: 0, fri: 0 }
-	const timeList = { morning: 0, lunch: 0, dinner: 0 }
-	const date = req.params.date
-	const time = req.params.time
-	if (!(date in dateList) || !(time in timeList)) res.send("Bad Request!")
-	else res.render("index", eat(date, time))
+
+router.get("/semantic/:month/:date/:daytime", async function(
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) {
+	try {
+		const ans = await getDiet(
+			Number(req.params.month),
+			Number(req.params.date),
+			req.params.daytime as Daytime
+		)
+		return res.render("index", {
+			month: req.params.month,
+			date: req.params.date,
+			daytime: req.params.daytime,
+			menus: ans
+		})
+	} catch (err) {
+		console.log(err)
+		return res.send("error occured")
+	}
 })
+
 export default router

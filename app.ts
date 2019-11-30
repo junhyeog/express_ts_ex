@@ -1,7 +1,9 @@
 import express from "express"
 import indexRouter from "./routes/index"
+import mongoConnect from "./mongo_connect"
 
 var app = express()
+mongoConnect()
 
 app.set("view engine", "ejs")
 
@@ -15,7 +17,7 @@ app.use(function(err: any, req: any, res: any, next: any) {
 
 	// render the error page
 	res.status(err.status || 500)
-	res.render("error")
+	res.send("error")
 })
 
 export default app
